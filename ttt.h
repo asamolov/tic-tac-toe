@@ -29,8 +29,8 @@ const int SCREEN_HEIGHT = 800;
 #define FIELD_WIDTH 3
 #define FIELD_HEIGHT 3
 
-const int CELL_WIDTH = SCREEN_WIDTH / FIELD_WIDTH;
-const int CELL_HEIGHT = SCREEN_HEIGHT / FIELD_HEIGHT;
+#define CELL_WIDTH  (SCREEN_WIDTH / FIELD_WIDTH)
+#define CELL_HEIGHT (SCREEN_HEIGHT / FIELD_HEIGHT)
 
 typedef enum { CELL_X = 'x', CELL_O = 'o', EMPTY_CELL = ' ' } Cell;
 

@@ -4,6 +4,7 @@
 
 #include "ttt.h"
 
+#include <stdbool.h>
 #include <SDL.h>
 #include <SDL2_gfxPrimitives.h>
 #include <stdio.h>
