@@ -10,7 +10,7 @@ project ("ttt")
 
 # ttt
 add_executable (ttt
-    "ttt.cpp"
+    "ttt.c"
     "ttt.h"
 )
 
@@ -24,4 +24,4 @@ target_link_libraries(ttt
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
 
-set_property(TARGET ttt PROPERTY CXX_STANDARD 20)
+set_property(TARGET ttt PROPERTY C_STANDARD 23)

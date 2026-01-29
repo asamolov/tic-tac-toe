@@ -320,6 +320,6 @@ bool update_result(Game* game) {
   return false;
 }
 
-inline size_t s2x(int screen_x) { return screen_x / CELL_WIDTH; }
+size_t s2x(int screen_x) { return screen_x / CELL_WIDTH; }
 
-inline size_t s2y(int screen_y) { return screen_y / CELL_HEIGHT; }
+size_t s2y(int screen_y) { return screen_y / CELL_HEIGHT; }
