@@ -2,6 +2,15 @@
 
 #include <SDL.h>
 
+#ifndef _MSC_VER
+#define __min(a, b)           \
+  ({                        \
+    __typeof__(a) _a = (a); \
+    __typeof__(b) _b = (b); \
+    _a < _b ? _a : _b;      \
+  })
+#endif
+
 const SDL_Color COLOR_X = {184, 63, 63, SDL_ALPHA_OPAQUE};
 const SDL_Color COLOR_O = {96, 209, 212, SDL_ALPHA_OPAQUE};
 const SDL_Color COLOR_BG = {0x11, 0x11, 0x11, SDL_ALPHA_OPAQUE};
