@@ -14,14 +14,11 @@ add_executable (ttt
     "ttt.h"
 )
 
-find_package(SDL2 CONFIG REQUIRED)
-find_package(sdl2-gfx CONFIG REQUIRED)
+find_package(raylib CONFIG REQUIRED)
 
 target_link_libraries(ttt
     PRIVATE
-    SDL2::SDL2_gfx
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+    raylib
 )
 
 set_property(TARGET ttt PROPERTY C_STANDARD 23)

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <SDL.h>
+#include <raylib.h>
+#include <stdlib.h>
 
-#ifndef _MSC_VER
-#define __min(a, b)           \
+#ifndef __min
+#define __min(a, b)         \
   ({                        \
     __typeof__(a) _a = (a); \
     __typeof__(b) _b = (b); \
@@ -11,15 +12,11 @@
   })
 #endif
 
-const SDL_Color COLOR_X = {184, 63, 63, SDL_ALPHA_OPAQUE};
-const SDL_Color COLOR_O = {96, 209, 212, SDL_ALPHA_OPAQUE};
-const SDL_Color COLOR_BG = {0x11, 0x11, 0x11, SDL_ALPHA_OPAQUE};
-const SDL_Color COLOR_GRID = {0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE};
-const SDL_Color COLOR_STROKE = {0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE / 2};
-
-#define SDL_SetColor(renderer, color)                                 \
-  SDL_SetRenderDrawColor((renderer), (color).r, (color).g, (color).b, \
-                         (color).a);
+const Color COLOR_X = {184, 63, 63, 0xFF};
+const Color COLOR_O = {96, 209, 212, 0xFF};
+const Color COLOR_BG = {0x11, 0x11, 0x11, 0xFF};
+const Color COLOR_GRID = {0xFF, 0xFF, 0xFF, 0xFF};
+const Color COLOR_STROKE = {0xFF, 0xFF, 0xFF, 0xEF};
 
 const int THICKNESS = 20;
 
@@ -29,27 +26,33 @@ const int SCREEN_HEIGHT = 800;
 #define FIELD_WIDTH 3
 #define FIELD_HEIGHT 3
 
-#define CELL_WIDTH  (SCREEN_WIDTH / FIELD_WIDTH)
+#define CELL_WIDTH (SCREEN_WIDTH / FIELD_WIDTH)
 #define CELL_HEIGHT (SCREEN_HEIGHT / FIELD_HEIGHT)
 
 typedef enum { CELL_X = 'x', CELL_O = 'o', EMPTY_CELL = ' ' } Cell;
 
-typedef enum { PLAYER_X = 'x', PLAYER_O = 'o'} Player;
+typedef enum { PLAYER_X = 'x', PLAYER_O = 'o' } Player;
 
 typedef enum { RESULT_X_WON, RESULT_O_WON, RESULT_DRAW } Result;
 
 typedef enum { GAME_START, GAME_IN_PROGRESS, GAME_END } State;
 
-typedef enum { VERT = '|', HOR = '-', DIAG_MAIN = '\\', DIAG_OPP = '/', NONE = ' ' } Stroke;
+typedef enum {
+  VERT = '|',
+  HOR = '-',
+  DIAG_MAIN = '\\',
+  DIAG_OPP = '/',
+  NONE = ' '
+} Stroke;
 
-
-typedef struct {	
+typedef struct {
   Cell field[FIELD_WIDTH][FIELD_HEIGHT];
   Stroke stroke[FIELD_WIDTH][FIELD_HEIGHT];
   Player current;
   Result result;
   State state;
   struct LastMove {
-	int x; int y;
+    size_t x;
+    size_t y;
   } last_move;
 } Game;
