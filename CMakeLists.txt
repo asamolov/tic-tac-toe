@@ -22,3 +22,8 @@ target_link_libraries(ttt
 )
 
 set_property(TARGET ttt PROPERTY C_STANDARD 23)
+
+add_custom_target(copy_assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/shaders ${CMAKE_CURRENT_BINARY_DIR}/shaders
+)
+add_dependencies(ttt copy_assets)

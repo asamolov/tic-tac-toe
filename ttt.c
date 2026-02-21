@@ -12,6 +12,8 @@ void init_game(Game* game);
 void clear_game(Game* game);
 void render_bg();
 void render_game(Game* game);
+RenderTexture2D prepare_x();
+RenderTexture2D prepare_o();
 void draw_x(size_t x, size_t y);
 void draw_o(size_t x, size_t y);
 void stroke(size_t x, size_t y, Stroke stroke);
@@ -21,6 +23,10 @@ inline size_t s2y(int screen_y);
 void on_click(Game* game, size_t x, size_t y);
 bool update_result(Game* game);
 
+Shader shader = {0};
+RenderTexture2D tex_x = {0};
+RenderTexture2D tex_o = {0};
+
 int main(int argc, char* argv[]) {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tic Tac Toe");
   if (!IsWindowReady()) {
@@ -28,6 +34,13 @@ int main(int argc, char* argv[]) {
     goto exit;
   }
 
+  shader = LoadShader(0, "shaders/bloom.fs");
+  if (!IsShaderReady(shader)) {
+    TraceLog(LOG_ERROR, "Failed to load shader");
+    goto exit;
+  }
+  tex_x = prepare_x();
+  tex_o = prepare_o();
   Game game;
   init_game(&game);
   SetTargetFPS(60);
@@ -42,8 +55,11 @@ int main(int argc, char* argv[]) {
     DrawFPS(0, 0);
     EndDrawing();
   }
-  CloseWindow();
 exit:
+  UnloadShader(shader);
+  UnloadRenderTexture(tex_x);
+  UnloadRenderTexture(tex_o);
+  CloseWindow();
   return 0;
 }
 
@@ -63,6 +79,7 @@ void render_game(Game* game) {
   for (size_t x = 0; x < FIELD_WIDTH; x++) {
     for (size_t y = 0; y < FIELD_HEIGHT; y++) {
       if (game->stroke[x][y] != NONE) highlight(x, y, game->field[x][y]);
+      // BeginShaderMode(shader);
       switch (game->field[x][y]) {
         case CELL_X:
           draw_x(x, y);
@@ -71,7 +88,8 @@ void render_game(Game* game) {
           draw_o(x, y);
           break;
       }
-      // stroke(renderer, x, y, game->stroke[x][y]);
+      // EndShaderMode();
+      //  stroke(renderer, x, y, game->stroke[x][y]);
     }
   }
 }
@@ -104,17 +122,25 @@ void init_game(Game* game) {
   game->last_move.y = 1;
 }
 
-void draw_x(size_t x, size_t y) {
+RenderTexture2D prepare_x() {
+  RenderTexture2D texture = LoadRenderTexture(CELL_WIDTH, CELL_HEIGHT);
   Color c = COLOR_X;
-  int center_x = CELL_WIDTH * x + CELL_WIDTH / 2;
-  int center_y = CELL_HEIGHT * y + CELL_HEIGHT / 2;
+  int center_x = CELL_WIDTH / 2;
+  int center_y = CELL_HEIGHT / 2;
   int padding = __min(CELL_HEIGHT, CELL_WIDTH) / 4;
+  BeginTextureMode(texture);
   DrawLineEx(CLITERAL(Vector2){center_x - padding, center_y - padding},
              CLITERAL(Vector2){center_x + padding, center_y + padding},
              THICKNESS, c);
   DrawLineEx(CLITERAL(Vector2){center_x - padding, center_y + padding},
              CLITERAL(Vector2){center_x + padding, center_y - padding},
              THICKNESS, c);
+  EndTextureMode();
+  return texture;
+}
+
+void draw_x(size_t x, size_t y) {
+  DrawTexture(tex_x.texture, CELL_WIDTH * x, CELL_HEIGHT * y, WHITE);
 }
 
 void highlight(size_t x, size_t y, Cell cell) {
@@ -170,12 +196,20 @@ void stroke(size_t x, size_t y, Stroke stroke) {
              CLITERAL(Vector2){end_x, end_y}, THICKNESS / 2, c);
 }
 
-void draw_o(size_t x, size_t y) {
-  int center_x = CELL_WIDTH * x + CELL_WIDTH / 2;
-  int center_y = CELL_HEIGHT * y + CELL_HEIGHT / 2;
+RenderTexture2D prepare_o() {
+  RenderTexture2D texture = LoadRenderTexture(CELL_WIDTH, CELL_HEIGHT);
+  int center_x = CELL_WIDTH / 2;
+  int center_y = CELL_HEIGHT / 2;
   int padding = __min(CELL_HEIGHT, CELL_WIDTH) / 4;
+  BeginTextureMode(texture);
   DrawCircle(center_x, center_y, padding + THICKNESS, COLOR_O);
   DrawCircle(center_x, center_y, padding, COLOR_BG);
+  EndTextureMode();
+  return texture;
+}
+
+void draw_o(size_t x, size_t y) {
+  DrawTexture(tex_o.texture, CELL_WIDTH * x, CELL_HEIGHT * y, WHITE);
 }
 
 void on_click(Game* game, size_t x, size_t y) {
