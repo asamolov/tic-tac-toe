@@ -78,8 +78,9 @@ void render_game(Game* game) {
             game->field[game->last_move.x][game->last_move.y]);
   for (size_t x = 0; x < FIELD_WIDTH; x++) {
     for (size_t y = 0; y < FIELD_HEIGHT; y++) {
+      bool bloom = (x == game->last_move.x) && (y == game->last_move.y);
       if (game->stroke[x][y] != NONE) highlight(x, y, game->field[x][y]);
-      // BeginShaderMode(shader);
+      if (bloom) BeginShaderMode(shader);
       switch (game->field[x][y]) {
         case CELL_X:
           draw_x(x, y);
@@ -88,7 +89,7 @@ void render_game(Game* game) {
           draw_o(x, y);
           break;
       }
-      // EndShaderMode();
+      if (bloom) EndShaderMode();
       //  stroke(renderer, x, y, game->stroke[x][y]);
     }
   }
@@ -203,7 +204,10 @@ RenderTexture2D prepare_o() {
   int padding = __min(CELL_HEIGHT, CELL_WIDTH) / 4;
   BeginTextureMode(texture);
   DrawCircle(center_x, center_y, padding + THICKNESS, COLOR_O);
-  DrawCircle(center_x, center_y, padding, COLOR_BG);
+  BeginBlendMode(BLEND_SUBTRACT_COLORS);
+  DrawCircle(center_x, center_y, padding,
+             CLITERAL(Color){0xFF, 0xFF, 0xFF, 0xFF});
+  EndBlendMode();
   EndTextureMode();
   return texture;
 }
